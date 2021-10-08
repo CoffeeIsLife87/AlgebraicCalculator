@@ -1,9 +1,8 @@
 #include <vector>
 #include <iostream>
-#pragma once
+#include "Primes.hpp"
 using namespace std;
-
-vector<int> PrimeList = { 2, 3, 5, 7, 11, 13 };
+using namespace Primes;
 
 class Fraction
 {
@@ -82,56 +81,6 @@ private:
 Fraction::Fraction(int TH = 0, int BH = 1): 
 	TopHalf(TH), BottomHalf(BH){}
 
-vector<int> GetPrimes(int Num)
-{
-	vector<int> Primes;
-	int TmpNum = Num;
-	while (true)
-	{
-		if ((TmpNum % 2) == 0)
-		{
-			TmpNum = TmpNum / 2;
-			Primes.push_back(2);
-			continue;
-		}
-		else if ((TmpNum % 3) == 0)
-		{
-			TmpNum = TmpNum / 3;
-			Primes.push_back(3);
-			continue;
-		}
-		else if ((TmpNum % 5) == 0)
-		{
-			TmpNum = TmpNum / 5;
-			Primes.push_back(5);
-			continue;
-		}
-		else if ((TmpNum % 7) == 0)
-		{
-			TmpNum = TmpNum / 7;
-			Primes.push_back(7);
-			continue;
-		}
-		else if ((TmpNum % 11) == 0)
-		{
-			TmpNum = TmpNum / 11;
-			Primes.push_back(11);
-			continue;
-		}
-		else if ((TmpNum % 13) == 0)
-		{
-			TmpNum = TmpNum / 13;
-			Primes.push_back(13);
-			continue;
-		}
-		else
-		{
-			return Primes;
-		}
-	}
-}
-
-
 signed int Fraction::CreateCommonBottom(int LeftBottom, int RightBottom)
 {	
 	vector<int> LeftPrimes = GetPrimes(LeftBottom);
@@ -139,7 +88,7 @@ signed int Fraction::CreateCommonBottom(int LeftBottom, int RightBottom)
 
 	int FinalBottom = 1;
 
-	for (int PrimeID = 0; PrimeID < (int)PrimeList.size(); PrimeID++)
+	for (int PrimeID = 0; PrimeID < PLSize; PrimeID++)
 	{
 		int LeftPrimeCount  = 0;
 		int RightPrimeCount = 0;
@@ -192,7 +141,7 @@ void Fraction::SimplifyFraction()
 	// Count amount of specific primes per half
 	for (int i = 0; i < (int)TopHalfPrimes.size(); i++)
 	{
-		for (int p = 0; p < (int)PrimeList.size(); p++) // p is the index of the prime in PrimeList
+		for (int p = 0; p < PLSize; p++) // p is the index of the prime in PrimeList
 		{
 			if (TopHalfPrimes[i] == PrimeList[p])
 			{
@@ -203,7 +152,7 @@ void Fraction::SimplifyFraction()
 	}
 	for (int i = 0; i < (int)BottomHalfPrimes.size(); i++)
 	{
-		for (int p = 0; p < (int)PrimeList.size(); p++) // p is the index of the prime in PrimeList
+		for (int p = 0; p < PLSize; p++) // p is the index of the prime in PrimeList
 		{
 			if (BottomHalfPrimes[i] == PrimeList[p])
 			{
@@ -333,9 +282,9 @@ Fraction Fraction::operator/(Fraction ToDevide)
 const char* Fraction::out()
 {
 	string SOut;
-	SOut.append(to_string(this->GetTopHalf()));
+	SOut.append(to_string(this->TopHalf));
 	SOut.append("/");
-	SOut.append(to_string(this->GetBottomHalf()));
+	SOut.append(to_string(this->BottomHalf));
 
 	return SOut.c_str();
 }

@@ -29,3 +29,5 @@ Fraction Parabola::GetDescriminate()
     V2 = V2 * C;
     return V1 - V2;
 }
+
+//Fraction*
