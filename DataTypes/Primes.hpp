@@ -12,6 +12,11 @@ namespace Primes {
 
 vector<int> Primes::GetPrimes(int Num)
 {
+	if (Num == 0)
+	{
+		vector<int> F;
+		return F;
+	}
 	vector<int> Primes;
 	int TmpNum = Num;
 	int StartingPrime = 0;

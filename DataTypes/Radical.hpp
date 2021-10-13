@@ -6,13 +6,16 @@ class Radical
 public:
     Radical(int Coef, int Radicand);
 
-    const Fraction GetCoef();
-    const int      GetRadicand();
+    const int GetCoef();
+    const int GetRadicand();
+
+    bool IsPerfectSquare();
 
     void Simplify();
     const char* out();
 
 private:
+    bool PerfectSquare = false;
     int Coef;
     int Radicand;
 
@@ -22,6 +25,21 @@ Radical::Radical(int Coef = 1, int Radicand = 1)
 {
     this->Coef = Coef;
     this->Radicand = Radicand;
+}
+
+const int Radical::GetCoef()
+{
+    return Coef;
+}
+
+const int Radical::GetRadicand()
+{
+    return Radicand;
+}
+
+bool Radical::IsPerfectSquare()
+{
+    return PerfectSquare;
 }
 
 void Radical::Simplify()
@@ -55,6 +73,10 @@ void Radical::Simplify()
     }
 
     this->Coef = NewCoef;
+    if (NewRad == 1)
+    {
+        PerfectSquare = true;
+    }
     this->Radicand = NewRad;
 
 }
