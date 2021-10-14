@@ -235,8 +235,8 @@ bool Fraction::operator<=(Fraction F)
 
 void Fraction::SimplifyFraction()
 {
-	bool TopIsNegative = (this->TopHalf < 0);
-	bool IsNegative = (this->TopHalf < 0);
+	bool IsTopNegative = (this->TopHalf < 0);
+	bool IsBottomNegative = (this->BottomHalf < 0);
 	int SimpTopHalf    = 1;
 	int SimpBottomHalf = 1;
 
@@ -294,9 +294,14 @@ void Fraction::SimplifyFraction()
 		}
 	}
 
-	if (IsNegative)
+	if (IsTopNegative && IsBottomNegative){}
+	else if (IsTopNegative && !IsBottomNegative)
 	{
 		SimpTopHalf = SimpTopHalf * -1;
+	}
+	else if (!IsTopNegative && IsBottomNegative)
+	{
+		SimpBottomHalf = SimpBottomHalf * -1;
 	}
 	this->TopHalf = SimpTopHalf;
 	this->BottomHalf = SimpBottomHalf;
@@ -306,9 +311,9 @@ const char* Fraction::out()
 {
 	this->SimplifyFraction();
 	string SOut;
-	SOut.append(to_string(this->TopHalf));
+	SOut.append(to_string((signed int)this->TopHalf));
 	SOut.append("/");
-	SOut.append(to_string(this->BottomHalf));
+	SOut.append(to_string((signed int)this->BottomHalf));
 
 	return SOut.c_str();
 }

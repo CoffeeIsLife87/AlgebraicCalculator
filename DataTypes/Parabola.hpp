@@ -61,6 +61,8 @@ void Parabola::CalculateRoots()
     // Get the current descriminate
     int Descrim = GetDescriminate();
     
+    //cout << Descrim << endl;
+
     // If it's a negative number then return no roots
     if (Descrim < 0)
     {
@@ -126,14 +128,17 @@ void Parabola::CalculateRoots()
 string Parabola::out()
 {
     CalculateRoots();
+    bool NoRoot = false;
     string SOut;
 
     if (Roots[0] == 0)
     {
         SOut.append("there are no roots.");
+        NoRoot = true;
     }
 
-    if (this->IsRootNumber())
+    if (NoRoot) {}
+    else if (this->IsRootNumber())
     {
         SOut.append("The first root is ").append(Roots[1].out());
         if (Roots[0] > 1) SOut.append(" and the second root is ").append(Roots[2].out());
@@ -142,8 +147,6 @@ string Parabola::out()
     {
         SOut = WrittenOut;
     }
-
-    //cout << SOut << endl;
 
     return SOut.c_str();
 }
