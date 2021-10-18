@@ -2,9 +2,9 @@
 #include <iostream>
 #pragma once
 
-// Chances are a number isn't going to use a prime over 29. And even 29 is being a bit cautious
-const vector<int> PrimeList = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 };
-const int PLSize = (int)PrimeList.size();
+// Chances are a number isn't going to use a prime over 97. And even 97 is being a VERY generous
+const vector<int> PrimeList = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97};
+const int PLSize = (int)PrimeList.size() - 1;
 namespace Primes {
     vector<int> GetPrimes(int Num);
 	int* NumberOfPrimes(vector<int> Num);

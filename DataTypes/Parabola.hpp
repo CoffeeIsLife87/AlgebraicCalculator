@@ -108,6 +108,8 @@ void Parabola::CalculateRoots()
         return;
     }
 
+    cout << Descrim << endl;
+
     // If the descriminate is == 0, there will be 1 root
     if (Descrim == 0)
     {
@@ -130,6 +132,9 @@ string Parabola::out()
     CalculateRoots();
     bool NoRoot = false;
     string SOut;
+
+    Fraction Temp1 = Roots[1];
+    Fraction Temp2 = Roots[2];
 
     if (Roots[0] == 0)
     {

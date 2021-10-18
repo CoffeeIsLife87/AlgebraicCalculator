@@ -5,8 +5,8 @@ using namespace std;
 
 int main()
 {
-    //Parabola P = Parabola(12, -31, 20);
+    Parabola P = Parabola(8, -59, 21);
+    cout << P.out() << endl;
 
-    //cout << P.out() << endl;
     return 0;
 }

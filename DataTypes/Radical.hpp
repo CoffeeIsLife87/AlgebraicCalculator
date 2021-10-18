@@ -72,6 +72,11 @@ void Radical::Simplify()
         }
     }
 
+    if ((NewCoef == 1) && (NewRad == 1) )
+    {
+        NewCoef = this->Radicand; // There's a good chance that if the number doesn't have a prime under 97 then the number itself is a prime
+    }
+
     this->Coef = NewCoef;
     if (NewRad == 1)
     {
