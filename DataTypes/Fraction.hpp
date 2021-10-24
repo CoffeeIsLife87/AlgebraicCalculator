@@ -312,8 +312,11 @@ const char* Fraction::out()
 	this->SimplifyFraction();
 	string SOut;
 	SOut.append(to_string((signed int)this->TopHalf));
-	SOut.append("/");
-	SOut.append(to_string((signed int)this->BottomHalf));
+	if (this->BottomHalf != 1)
+	{
+		SOut.append("/");
+		SOut.append(to_string((signed int)this->BottomHalf));
+	}
 
 	return SOut.c_str();
 }

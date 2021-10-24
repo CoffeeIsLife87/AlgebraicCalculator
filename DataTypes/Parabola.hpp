@@ -8,6 +8,9 @@ public:
     Parabola(int A, int B, int C);
     int GetDescriminate();
 
+    Fraction GetAoS();
+    Fraction* GetCoord(Fraction X);
+
     const bool IsRootNumber();
     const Fraction* GetRoots();
     void CalculateRoots();
@@ -32,6 +35,28 @@ Parabola::Parabola(int A, int B, int C)
     this->A = A;
     this->B = B;
     this->C = C;
+}
+
+Fraction Parabola::GetAoS()
+{
+    Fraction Ret = Fraction((this->B * -1) , (this->A * 2));
+    Ret.SimplifyFraction();
+    return Ret;
+}
+
+Fraction* Parabola::GetCoord(Fraction X)
+{
+    Fraction F1;
+    F1 = (Fraction)this->A * (X * X);
+
+    Fraction F2;
+    F2 =  (Fraction)this->B * X;
+
+    Fraction Y = F1 + F2 + this->C;
+    Fraction* Ret = new Fraction[2];
+    Ret[0] = X;
+    Ret[1] = Y;
+    return Ret;
 }
 
 int Parabola::GetDescriminate()
