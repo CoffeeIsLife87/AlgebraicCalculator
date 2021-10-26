@@ -5,10 +5,7 @@ using namespace std;
 
 int main()
 {
-
-    Parabola P = Parabola(2, -4, 5);
-    Fraction* o = P.GetCoord(P.GetAoS());
-    cout << o[0].out() << ", " << o[1].out() << endl;
+    Parabola P = Parabola::ParabolaABC(2,-4,5); //Parabola::ParabolaHK(-3,2,5);
     cout << P.out() << endl;
     return 0;
 }

@@ -1,11 +1,18 @@
 #include <cmath>
 #include "Radical.hpp"
 
+using namespace std;
+
 class Parabola
 {
 public:
-    //Term GetX();
-    Parabola(int A, int B, int C);
+    // "Constructor" For Standard form
+    static Parabola ParabolaABC(int A, int B, int C);
+    // "Constructor" For Vertex form
+    static Parabola ParabolaHK(int A, int H, int K);
+    // "Constructor" for Factored form
+    //static Parabola ParabolaPQ(int A, int P, int Q);
+
     int GetDescriminate();
 
     Fraction GetAoS();
@@ -13,29 +20,71 @@ public:
 
     const bool IsRootNumber();
     const Fraction* GetRoots();
+    // This will return at most 3 values. The first item is the return count. The second is the left root (or only), the third item is the right root
     void CalculateRoots();
 
     string out();
 
 private:
-    //Term X;
-    int A = 1;
-    int B = 1;
-    int C = 1;
+    Parabola(){};
+
+    // A, B, C, H, K, P, Q
+    bool Init[7] = {false};
+    signed int A, B, C, H, K, P, Q;
+
+    bool OpensUp = true;
 
     bool RootIsNumber = false;
-    bool Invert = false;
-
     Fraction* Roots = new Fraction[3];
     char* WrittenOut;
 };
 
-Parabola::Parabola(int A, int B, int C)
+inline Parabola Parabola::ParabolaABC(int A, int B, int C)
 {
-    this->A = A;
-    this->B = B;
-    this->C = C;
+    /*-----------------------------------------------*\
+    | y = AX^2 + BX + C                               |
+    \*-----------------------------------------------*/
+
+    Parabola ret = Parabola();
+    for (int i = 0; i < 3; i++){ret.Init[i] = true;}
+    ret.A = A; ret.Init[0] == true;
+    ret.B = B; ret.Init[1] == true;
+    ret.C = C; ret.Init[2] == true;
+    return ret;
 }
+
+inline Parabola Parabola::ParabolaHK(int A, int H, int K)
+{
+    /*--------------------------------------------*\
+    | y= (a * (x - h)^2) + k                       |
+    | The H represents the X point in the vertex   |
+    | The K represents the Y point in the vertex   |
+    \*--------------------------------------------*/
+    Parabola ret = Parabola();
+    // We need to do the squaring first so we'll do that
+    // It ends up looking like (x - h)(x - h)
+    // so we'll have X^2, h*h, h*x, h*x
+    // Then we multiply all of those by A
+
+    // A is A :)
+    ret.A = A; ret.Init[0] = true;
+    ret.H = H; ret.Init[3] = true;
+    ret.K = K; ret.Init[4] = true;
+
+    // B = H*X. This doesn't become X^2. So we can assume that this will be B
+    ret.B = (-H * A) + (-H * A); ret.Init[1] = true;
+    // There isn't an X here. So we can assume that this is C
+    ret.C = ((-H * -H) * A) + K; ret.Init[2] = true;
+
+    if (A < 0){ret.OpensUp = false;}
+
+    return ret;
+}
+
+//inline Parabola Parabola::ParabolaPQ(int A, int P, int Q)
+//{
+//    return *this;
+//}
 
 Fraction Parabola::GetAoS()
 {
@@ -77,9 +126,10 @@ const Fraction* Parabola::GetRoots()
     return Roots;
 }
 
-// This will return at most 3 values. The first item is the return count. The second is the left root (or only), the 
 void Parabola::CalculateRoots()
 {
+    //if (Init[0] && Init[1] && Init[2])
+
     // Just assume it's a number. If it's not, we'll specify later
     RootIsNumber = true;
 
@@ -110,8 +160,8 @@ void Parabola::CalculateRoots()
     if (!NewD.IsPerfectSquare())
     {
         Roots[0] = 1;
-        std::string WriteOut;
-        WriteOut.append(std::to_string((signed int)B));
+        string WriteOut;
+        WriteOut.append(to_string((signed int)B));
         WriteOut.append("∓");
         WriteOut.append(NewD.out());
         int Underscorecount = WriteOut.size();
@@ -127,7 +177,7 @@ void Parabola::CalculateRoots()
         {
             WriteOut.append(" ");
         }
-        WriteOut.append(std::to_string(TempA));
+        WriteOut.append(to_string(TempA));
         WrittenOut = (char*)WriteOut.c_str();
         RootIsNumber = false;
         return;
@@ -149,6 +199,18 @@ void Parabola::CalculateRoots()
         Roots[1] = Fraction((TempB - NewD.GetCoef()),TempA);
         Roots[2] = Fraction((TempB + NewD.GetCoef()),TempA);
     }
+}
+
+// True + & False -
+const char* sign(int check, bool initial){
+
+    if (  (!initial && (check < 0) )  ||  (initial && (check >= 0) )  ){ // subtraction and negative number or addition and positive number
+        return string("+ ").append(to_string(abs(check))).c_str();
+    }
+    if (  (!initial && (check >= 0) )  ||  (initial && (check < 0) )  ){ // subtraction and positive number or addition and negative number
+        return string("- ").append(to_string(abs(check))).c_str();
+    }
+    return "";
 }
 
 // Char output for printing
@@ -176,6 +238,39 @@ string Parabola::out()
     else
     {
         SOut = WrittenOut;
+    }
+
+
+    SOut.append("\n");
+
+    Fraction* P = this->GetCoord(this->GetAoS());
+    SOut.append("Vertex: (");
+    SOut.append(P[0].out());
+    SOut.append(", ");
+    SOut.append(P[1].out());
+    SOut.append(")\n");
+
+    SOut.append("AoS: ");
+    SOut.append(P[0].out());
+    SOut.append("\n");
+
+    if (OpensUp)
+    {
+        SOut.append("Parabola Opens Up");
+    }
+    else
+    {
+        SOut.append("Parabola Opens Down\n");
+    }
+
+    if (Init[0] && Init[1] && Init[2])
+    {
+        SOut.append("Standard Form: ")                                  \
+        .append(to_string(A)) /*A*/                                     \
+        .append("X^2 ")       /*A(X^2)*/                                \
+        .append(sign(B,true)) /*A(X^2) < + or - > B */                  \
+        .append("x ")         /*A(X^2) < + or - > B(X) */               \
+        .append(sign(C,true));/*A(X^2) < + or - > B(X) < + or - > C */
     }
 
     return SOut.c_str();

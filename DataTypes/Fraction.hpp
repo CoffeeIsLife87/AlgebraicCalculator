@@ -301,7 +301,7 @@ void Fraction::SimplifyFraction()
 	}
 	else if (!IsTopNegative && IsBottomNegative)
 	{
-		SimpBottomHalf = SimpBottomHalf * -1;
+		SimpTopHalf = SimpTopHalf * -1;
 	}
 	this->TopHalf = SimpTopHalf;
 	this->BottomHalf = SimpBottomHalf;
