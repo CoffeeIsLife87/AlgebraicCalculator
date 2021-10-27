@@ -15,6 +15,7 @@ class Fraction
 	\*-------------------------------------------------------------------------*/
 public:
 	Fraction(int TopHalf, int BottomHalf);
+	Fraction(Fraction TopHalf, Fraction BottomHalf);
 
 	// Direct Assignment
 	void operator=(int Num);
@@ -27,6 +28,7 @@ public:
 	// Subtraction
 	void operator-=(Fraction ToSubtract);
 	Fraction operator-(Fraction ToSubtract);
+	Fraction operator-(); // something about becoming negative or something?
 
 	// Multiplication
 	void operator*=(Fraction ToMultiply);
@@ -58,6 +60,9 @@ public:
 	void SimplifyFraction();
 	// Give characters to output for use in cout
 	const char* out();
+	const char* Absoluteout();
+
+	int Log10();
 
 private:
 	int TopHalf;
@@ -74,6 +79,13 @@ private:
 \*------------------------------------------------------------------------------------------------------*/
 Fraction::Fraction(int TH = 0, int BH = 1): 
 	TopHalf(TH), BottomHalf(BH){}
+
+Fraction::Fraction(Fraction LeftSide, Fraction Rightside)
+{
+	Fraction ret = TopHalf / BottomHalf;
+	this->TopHalf = ret.GetTopHalf();
+	this->BottomHalf = ret.GetBottomHalf();
+}
 
 void Fraction::operator=(int Num) {
 	this->TopHalf = Num;
@@ -153,6 +165,11 @@ Fraction Fraction::operator-(Fraction ToSubtract)
 
 	return Fraction((TopToSubFrom - TopToSub), FinalBottom);
 };
+Fraction Fraction::operator-()
+{
+	this->TopHalf = this->TopHalf * -1;
+	return *this;
+};
 
 void Fraction::operator*=(Fraction ToMultiply)
 {
@@ -192,6 +209,16 @@ bool Fraction::operator!=(Fraction F)
 
 bool Fraction::operator>(Fraction F)
 {
+
+	if ((F.GetTopHalf() == 0))
+	{
+		if (((this->TopHalf > 0) && (this->BottomHalf > 0)) || (this->TopHalf <= 0) && (this->BottomHalf < 0))
+		{
+			return true;
+		}
+		
+	}
+
 	int* Nums = GetCommonTop(F);
 	
 	signed int OTop = Nums[0];
@@ -320,6 +347,25 @@ const char* Fraction::out()
 
 	return SOut.c_str();
 }
+const char* Fraction::Absoluteout()
+{
+	this->SimplifyFraction();
+	string SOut;
+	this->TopHalf = abs(this->TopHalf);
+	SOut.append(to_string((signed int)this->TopHalf));
+	if (this->BottomHalf != 1)
+	{
+		SOut.append("/");
+		SOut.append(to_string((signed int)this->BottomHalf));
+	}
+
+	return SOut.c_str();
+}
+
+int Fraction::Log10()
+{
+	return log10(this->GetTopHalf() / this->GetBottomHalf());
+}
 
 signed int Fraction::CreateCommonBottom(int LeftBottom, int RightBottom)
 {	
@@ -369,12 +415,17 @@ signed int Fraction::CreateCommonBottom(int LeftBottom, int RightBottom)
 }
 int* Fraction::GetCommonTop(Fraction F)
 {
-
 		// Original is the number on the left
 		int OriginalBottom = this->BottomHalf;
 
+
 		// This is the number on the right
 		int CompareBottom = F.GetBottomHalf();
+		
+		if (OriginalBottom == 0)
+		{
+			
+		}
 
 		// Common bottom
 		int FinalBottom = CreateCommonBottom(OriginalBottom, CompareBottom);
