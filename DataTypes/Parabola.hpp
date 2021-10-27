@@ -11,12 +11,9 @@ public:
     // "Constructor" For Vertex form
     static Parabola ParabolaHK(int A, int H, int K);
     // "Constructor" for Factored form
-    //static Parabola ParabolaPQ(int A, int P, int Q);
+    static Parabola ParabolaPQ(int A, int P, int Q);
 
     int GetDescriminate();
-
-    Fraction GetAoS();
-    Fraction* GetCoord(Fraction X);
 
     const bool IsRootNumber();
     const Fraction* GetRoots();
@@ -28,7 +25,7 @@ public:
 private:
     Parabola(){};
 
-    // A, B, C, H, K, P, Q
+    // A(0), B(1), C(2), H(3), K(4), P(5), Q(6)
     bool Init[7] = {false};
     signed int A, B, C, H, K, P, Q;
 
@@ -37,6 +34,9 @@ private:
     bool RootIsNumber = false;
     Fraction* Roots = new Fraction[3];
     char* WrittenOut;
+
+    Fraction  GetAoS();
+    Fraction* GetVertex(Fraction X);
 };
 
 inline Parabola Parabola::ParabolaABC(int A, int B, int C)
@@ -56,7 +56,7 @@ inline Parabola Parabola::ParabolaABC(int A, int B, int C)
 inline Parabola Parabola::ParabolaHK(int A, int H, int K)
 {
     /*--------------------------------------------*\
-    | y= (a * (x - h)^2) + k                       |
+    | y = (a * (x - h)^2) + k                       |
     | The H represents the X point in the vertex   |
     | The K represents the Y point in the vertex   |
     \*--------------------------------------------*/
@@ -81,10 +81,24 @@ inline Parabola Parabola::ParabolaHK(int A, int H, int K)
     return ret;
 }
 
-//inline Parabola Parabola::ParabolaPQ(int A, int P, int Q)
-//{
-//    return *this;
-//}
+inline Parabola Parabola::ParabolaPQ(int A, int P, int Q)
+{
+    Parabola ret = Parabola();
+    /*
+    | y = A(x - p)(x - q)
+    | Time to start distributing
+    | x * x, -p * -q, (x * p, x * q) 
+    | We combine the last 2 terms because they have the same variables
+    | We'll also need to multiply everything by A
+                                    */
+    ret.A = A;                      ret.Init[0] = true;
+    ret.B = ((A * -P) + (A * -Q)); ret.Init[1] = true;
+    ret.C = (A * (-P * -Q));        ret.Init[2] = true;
+    ret.P = P;                      ret.Init[5] = true;
+    ret.Q = Q;                      ret.Init[6] = true;
+
+    return ret;
+}
 
 Fraction Parabola::GetAoS()
 {
@@ -93,7 +107,7 @@ Fraction Parabola::GetAoS()
     return Ret;
 }
 
-Fraction* Parabola::GetCoord(Fraction X)
+Fraction* Parabola::GetVertex(Fraction X)
 {
     Fraction F1;
     F1 = (Fraction)this->A * (X * X);
@@ -103,6 +117,9 @@ Fraction* Parabola::GetCoord(Fraction X)
 
     Fraction Y = F1 + F2 + this->C;
     Fraction* Ret = new Fraction[2];
+    if (X.isWhole()) H = X.GetWhole(); Init[3] = true;
+    if (Y.isWhole()) K = Y.GetWhole(); Init[4] = true;
+
     Ret[0] = X;
     Ret[1] = Y;
     return Ret;
@@ -183,8 +200,6 @@ void Parabola::CalculateRoots()
         return;
     }
 
-    cout << Descrim << endl;
-
     // If the descriminate is == 0, there will be 1 root
     if (Descrim == 0)
     {
@@ -240,37 +255,66 @@ string Parabola::out()
         SOut = WrittenOut;
     }
 
-
     SOut.append("\n");
 
-    Fraction* P = this->GetCoord(this->GetAoS());
-    SOut.append("Vertex: (");
-    SOut.append(P[0].out());
-    SOut.append(", ");
-    SOut.append(P[1].out());
-    SOut.append(")\n");
+    SOut.append("Descriminate: ")               \
+    .append(to_string(this->GetDescriminate())) \
+    .append("\n");
 
-    SOut.append("AoS: ");
-    SOut.append(P[0].out());
-    SOut.append("\n");
+    Fraction* V = this->GetVertex(this->GetAoS());
+    SOut.append("Vertex: (") \
+    .append(V[0].out())      \
+    .append(", ")            \
+    .append(V[1].out())      \
+    .append(")\n");
+
+    SOut.append("AoS: ") \
+    .append(V[0].out())  \
+    .append("\n");
 
     if (OpensUp)
     {
-        SOut.append("Parabola Opens Up");
+        SOut.append("Parabola Opens Up\n");
     }
     else
     {
         SOut.append("Parabola Opens Down\n");
     }
 
+    // Write standard form conversion
     if (Init[0] && Init[1] && Init[2])
     {
-        SOut.append("Standard Form: ")                                  \
-        .append(to_string(A)) /*A*/                                     \
-        .append("X^2 ")       /*A(X^2)*/                                \
-        .append(sign(B,true)) /*A(X^2) < + or - > B */                  \
-        .append("x ")         /*A(X^2) < + or - > B(X) */               \
-        .append(sign(C,true));/*A(X^2) < + or - > B(X) < + or - > C */
+        SOut.append("Standard Form: ")                                   \
+        .append(to_string(A)) /* A                                   */  \
+        .append("X^2 ")       /* A(X^2)                              */  \
+        .append(sign(B,true)) /* A(X^2) < + or - > B                 */  \
+        .append("x ")         /* A(X^2) < + or - > B(X)              */  \
+        .append(sign(C,true)) /* A(X^2) < + or - > B(X) < + or - > C */  \
+        .append("\n");
+    }
+
+    // Write vertex form conversion
+    if (Init[0] && Init[3] && Init[4])
+    {
+        SOut.append("Vertex Form: ")                                    \
+        .append(to_string(A))  /* A                                  */ \
+        .append("(X ")         /* A( X                               */ \
+        .append(sign(H,false)) /* A( X < + or - > H                  */ \
+        .append(")^2 ")        /* A( X < + or - > H )^2              */ \
+        .append(sign(K,true))  /* A( X < + or - > H )^2 < + or - > K */ \
+        .append("\n");
+    }
+
+    // Write Factored form conversion
+    if (Init[0] && Init[5] && Init[6])
+    {
+        SOut.append("Factored Form: ")                                        \
+        .append(to_string(A))     /* A                                     */ \
+        .append("(x ")            /* A(x )                                 */ \
+        .append(sign(P,false))    /* A( X < + or - > P                     */ \
+        .append(")(x")            /* A( X < + or - > P )( X )              */ \
+        .append(sign(Q,false))    /* A( X < + or - > P )( X < + or - > Q   */ \
+        .append(")\n");           /* A( X < + or - > P )( X < + or - > Q ) */ \
     }
 
     return SOut.c_str();
