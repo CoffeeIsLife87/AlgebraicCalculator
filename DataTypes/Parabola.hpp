@@ -53,6 +53,7 @@ inline Parabola Parabola::ParabolaABC(Fraction A, Fraction B, Fraction C)
     return ret;
 }
 
+// input as positive number for positive, negative for positive, positive for positive
 inline Parabola Parabola::ParabolaHK(Fraction A, Fraction H, Fraction K)
 {
     /*--------------------------------------------*\
@@ -66,17 +67,19 @@ inline Parabola Parabola::ParabolaHK(Fraction A, Fraction H, Fraction K)
     // so we'll have X^2, h*h, h*x, h*x
     // Then we multiply all of those by A
 
+
+
     // A is A :)
     ret.A = A; ret.Init[0] = true;
     ret.H = H; ret.Init[3] = true;
     ret.K = K; ret.Init[4] = true;
+    cout <<  (-H).out() << endl;
+    cout << ((-H) + -H).out() << endl;
 
     // B = H*X. This doesn't become X^2. So we can assume that this will be B
-    ret.B = (-H * A) + (-H * A); ret.Init[1] = true;
+    ret.B = A * (-H + -H); ret.Init[1] = true;
     // There isn't an X here. So we can assume that this is C
-    ret.C = ((-H * -H) * A) + K; ret.Init[2] = true;
-
-    if (A < 0){ret.OpensUp = false;}
+    ret.C = ((H * H) * A) + K; ret.Init[2] = true;
 
     return ret;
 }
@@ -117,9 +120,15 @@ Fraction* Parabola::GetVertex(Fraction X)
 
     Fraction Y = F1 + F2 + this->C;
     Fraction* Ret = new Fraction[2];
-    if (X.isWhole()) H = X.GetWhole(); Init[3] = true;
-    if (Y.isWhole()) K = Y.GetWhole(); Init[4] = true;
-
+    if (!Init[3])
+    {
+        if (X.isWhole()) H = X.GetWhole(); Init[3] = true;
+    }
+    if (!Init[4])
+    {
+        if (Y.isWhole()) K = Y.GetWhole(); Init[4] = true;
+    }
+    
     Ret[0] = X;
     Ret[1] = Y;
     return Ret;
@@ -204,19 +213,25 @@ void Parabola::CalculateRoots()
     {
         RootIsNumber = true;
         Roots[0] = 2;
-        Roots[1] = Fraction((TempB - NewD.GetCoef()),TempA);
-        Roots[2] = Fraction((TempB + NewD.GetCoef()),TempA);
+
+        Fraction NewP = Fraction((TempB - NewD.GetCoef()),TempA);
+        Roots[1] = NewP;
+        P = NewP; Init[5] = true;
+
+        Fraction NewQ = Fraction((TempB + NewD.GetCoef()),TempA);
+        Roots[2] = NewQ;
+        Q = NewQ; Init[6] = true;
     }
 }
 
 // True + & False -
-const char* sign(Fraction check, bool initial){
+string sign(Fraction check, bool initial){
 
     if (  (!initial && (check < 0) )  ||  (initial && (check >= 0) )  ){ // subtraction and negative number or addition and positive number
-        return string("+ ").append(check.Absoluteout()).c_str();
+        return string("+ ").append(check.Absoluteout());
     }
     if (  (!initial && (check >= 0) )  ||  (initial && (check < 0) )  ){ // subtraction and positive number or addition and negative number
-        return string("- ").append(check.Absoluteout()).c_str();
+        return string("- ").append(check.Absoluteout());
     }
     return "";
 }
@@ -262,24 +277,28 @@ string Parabola::out()
     .append(V[0].out())  \
     .append("\n");
 
-    if (OpensUp)
+    if (Init[0])
     {
-        SOut.append("Parabola Opens Up\n");
+        if (A >= 0)
+        {
+            SOut.append("Parabola Opens Up\n");
+        }
+        else
+        {
+            SOut.append("Parabola Opens Down\n");
+        }
     }
-    else
-    {
-        SOut.append("Parabola Opens Down\n");
-    }
+
 
     // Write standard form conversion
     if (Init[0] && Init[1] && Init[2])
     {
         SOut.append("Standard Form: ")                                   \
         .append(A.out())      /* A                                   */  \
-        .append("X^2 ")       /* A(X^2)                              */  \
-        .append(sign(B,true)) /* A(X^2) < + or - > B                 */  \
-        .append("x ")         /* A(X^2) < + or - > B(X)              */  \
-        .append(sign(C,true)) /* A(X^2) < + or - > B(X) < + or - > C */  \
+        .append("x^2 ")       /* A(x^2)                              */  \
+        .append(sign(B,true)) /* A(x^2) < + or - > B                 */  \
+        .append("x ")         /* A(x^2) < + or - > B(x)              */  \
+        .append(sign(C,true)) /* A(x^2) < + or - > B(x) < + or - > C */  \
         .append("\n");
     }
 
@@ -288,10 +307,10 @@ string Parabola::out()
     {
         SOut.append("Vertex Form: ")                                    \
         .append(A.out())       /* A                                  */ \
-        .append("(X ")         /* A( X                               */ \
-        .append(sign(H,false)) /* A( X < + or - > H                  */ \
-        .append(")^2 ")        /* A( X < + or - > H )^2              */ \
-        .append(sign(K,true))  /* A( X < + or - > H )^2 < + or - > K */ \
+        .append("(x ")         /* A( x                               */ \
+        .append(sign(H,false)) /* A( x < + or - > H                  */ \
+        .append(")^2 ")        /* A( x < + or - > H )^2              */ \
+        .append(sign(K,true))  /* A( x < + or - > H )^2 < + or - > K */ \
         .append("\n");
     }
 
@@ -301,10 +320,10 @@ string Parabola::out()
         SOut.append("Factored Form: ")                                        \
         .append(A.out())          /* A                                     */ \
         .append("(x ")            /* A(x )                                 */ \
-        .append(sign(P,false))    /* A( X < + or - > P                     */ \
-        .append(")(x")            /* A( X < + or - > P )( X )              */ \
-        .append(sign(Q,false))    /* A( X < + or - > P )( X < + or - > Q   */ \
-        .append(")\n");           /* A( X < + or - > P )( X < + or - > Q ) */ \
+        .append(sign(P,false))    /* A( x < + or - > P                     */ \
+        .append(")(x ")            /* A( x < + or - > P )( x )              */ \
+        .append(sign(Q,false))    /* A( x < + or - > P )( x < + or - > Q   */ \
+        .append(")\n");           /* A( x < + or - > P )( x < + or - > Q ) */ \
     }
 
     return SOut.c_str();

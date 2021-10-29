@@ -28,6 +28,7 @@ public:
 	// Subtraction
 	void operator-=(Fraction ToSubtract);
 	Fraction operator-(Fraction ToSubtract);
+
 	Fraction operator-(); // something about becoming negative or something?
 
 	// Multiplication
@@ -65,8 +66,8 @@ public:
 	int Log10();
 
 private:
-	int TopHalf;
-	int BottomHalf;
+	signed int TopHalf;
+	signed int BottomHalf;
 
 	// Find common denominator
 	signed int CreateCommonBottom(int LeftBottom, int RightBottom);
@@ -82,7 +83,7 @@ Fraction::Fraction(int TH = 0, int BH = 1):
 
 Fraction::Fraction(Fraction LeftSide, Fraction Rightside)
 {
-	Fraction ret = TopHalf / BottomHalf;
+	Fraction ret = LeftSide / Rightside;
 	this->TopHalf = ret.GetTopHalf();
 	this->BottomHalf = ret.GetBottomHalf();
 }
@@ -167,8 +168,7 @@ Fraction Fraction::operator-(Fraction ToSubtract)
 };
 Fraction Fraction::operator-()
 {
-	this->TopHalf = this->TopHalf * -1;
-	return *this;
+	return Fraction((this->TopHalf * -1), this->BottomHalf);
 };
 
 void Fraction::operator*=(Fraction ToMultiply)
@@ -270,8 +270,8 @@ void Fraction::SimplifyFraction()
 	vector<int> TopHalfPrimes = GetPrimes(this->TopHalf);
 	vector<int> BottomHalfPrimes = GetPrimes(this->BottomHalf);
 
-	int TopHalfPCount[6] = {0,0,0,0,0,0};
-	int BottomHalfPCount[6] = {0,0,0,0,0,0};
+	int TopHalfPCount[PLSize] = {0};
+	int BottomHalfPCount[PLSize] = {0};
 
 	// Count amount of specific primes per half
 	for (int i = 0; i < (int)TopHalfPrimes.size(); i++)
@@ -297,7 +297,7 @@ void Fraction::SimplifyFraction()
 		}
 	}
 
-	for (int i = 0; i < 6; i++) // What?
+	for (int i = 0; i < PLSize; i++) // What?
 	{
 		if (TopHalfPCount[i] > BottomHalfPCount[i])
 		{
@@ -329,6 +329,12 @@ void Fraction::SimplifyFraction()
 	else if (!IsTopNegative && IsBottomNegative)
 	{
 		SimpTopHalf = SimpTopHalf * -1;
+	}
+	
+	if (this->TopHalf == 0)
+	{
+		SimpTopHalf = 0;
+		SimpBottomHalf = 1;
 	}
 	this->TopHalf = SimpTopHalf;
 	this->BottomHalf = SimpBottomHalf;
