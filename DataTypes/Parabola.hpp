@@ -53,14 +53,16 @@ inline Parabola Parabola::ParabolaABC(Fraction A, Fraction B, Fraction C)
     return ret;
 }
 
-// input as positive number for positive, negative for positive, positive for positive
 inline Parabola Parabola::ParabolaHK(Fraction A, Fraction H, Fraction K)
 {
-    /*--------------------------------------------*\
-    | y = (a * (x - h)^2) + k                       |
-    | The H represents the X poFraction in the vertex   |
-    | The K represents the Y poFraction in the vertex   |
-    \*--------------------------------------------*/
+    /*-------------------------------------------------*\
+    | y = (a * (x - h)^2) + k                           |
+    | The H represents the X position in the vertex     |
+    | The K represents the Y position in the vertex     |
+    \*-------------------------------------------------*/
+
+    // input as positive number for positive, negative for positive, positive for positive
+
     Parabola ret = Parabola();
     // We need to do the squaring first so we'll do that
     // It ends up looking like (x - h)(x - h)
@@ -73,8 +75,6 @@ inline Parabola Parabola::ParabolaHK(Fraction A, Fraction H, Fraction K)
     ret.A = A; ret.Init[0] = true;
     ret.H = H; ret.Init[3] = true;
     ret.K = K; ret.Init[4] = true;
-    cout <<  (-H).out() << endl;
-    cout << ((-H) + -H).out() << endl;
 
     // B = H*X. This doesn't become X^2. So we can assume that this will be B
     ret.B = A * (-H + -H); ret.Init[1] = true;
@@ -236,7 +236,7 @@ string sign(Fraction check, bool initial){
     return "";
 }
 
-// Char output for prFractioning
+// Char output for printing
 string Parabola::out()
 {
     CalculateRoots();
@@ -321,7 +321,7 @@ string Parabola::out()
         .append(A.out())          /* A                                     */ \
         .append("(x ")            /* A(x )                                 */ \
         .append(sign(P,false))    /* A( x < + or - > P                     */ \
-        .append(")(x ")            /* A( x < + or - > P )( x )              */ \
+        .append(")(x ")           /* A( x < + or - > P )( x )              */ \
         .append(sign(Q,false))    /* A( x < + or - > P )( x < + or - > Q   */ \
         .append(")\n");           /* A( x < + or - > P )( x < + or - > Q ) */ \
     }

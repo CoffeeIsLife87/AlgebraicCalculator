@@ -5,9 +5,9 @@ using namespace std;
 
 int main()
 {
-    //Parabola P = Parabola::ParabolaHK(-2,-3,5);
-    Parabola P = Parabola::ParabolaABC(-5,30,0);
-    //Parabola P = Parabola::ParabolaPQ();
+    //Parabola P = Parabola::ParabolaHK(1,-3,-5);
+    Parabola P = Parabola::ParabolaABC(1,0,-16);
+    //Parabola P = Parabola::ParabolaPQ(5,-3,1);
     cout << P.out() << endl;
     return 0;
 }
