@@ -14,7 +14,8 @@
             "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "gdb"
+            "MIMode": "gdb",
+            "visualizerFile": "/home/erza/.config/Code/User/workspaceStorage/92d9355d785aace5421daa3d23560a82/tonka3000.qtvsctools/qt.natvis.xml"
         }
     ]
 }
