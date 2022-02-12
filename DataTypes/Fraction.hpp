@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <math.h>
 #include "Primes.hpp"
 using namespace std;
 using namespace Primes;

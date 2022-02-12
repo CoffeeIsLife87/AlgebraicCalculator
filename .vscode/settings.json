@@ -48,7 +48,18 @@
         "map": "cpp",
         "fstream": "cpp",
         "sstream": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "ctime": "cpp",
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "list": "cpp",
+        "set": "cpp",
+        "ratio": "cpp",
+        "mutex": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "complex": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"

@@ -17,5 +17,30 @@
             "MIMode": "gdb",
             "visualizerFile": "/home/erza/.config/Code/User/workspaceStorage/92d9355d785aace5421daa3d23560a82/tonka3000.qtvsctools/qt.natvis.xml"
         }
+        {
+            "name": "Valgrind profiling",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/AlgebraicCalculator",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "visualizerFile": "/home/erza/.config/Code/User/workspaceStorage/92d9355d785aace5421daa3d23560a82/tonka3000.qtvsctools/qt.natvis.xml",
+            "setupCommands": [
+                {
+                  "description": "Enable pretty-printing for gdb",
+                  "text": "-enable-pretty-printing",
+                  "ignoreFailures": true
+                },
+                {
+                  "description": "Connect to valgrind",
+                  "text": "${command:valgrind-task-integration.valgrindGdbArg}",
+                  "ignoreFailures": true
+                }
+              ]
+        }
     ]
 }

@@ -2,60 +2,59 @@
 #include <map>
 #include "Fraction.hpp"
 
-typedef struct VarExpo {
-    char VarLetter;
-    Fraction Expo = Fraction(0,1);
-} VarExpo;
+typedef std::map<char,Fraction> VarExpo;
 
+static VarExpo MakeVList(vector<char> characters, vector<Fraction> Exponents)
+{
+    if (characters.size() != Exponents.size()) {
+        std::__throw_out_of_range("Character and Exponent list aren't the same size");
+    }
+    VarExpo ReturnVList;
+    for (size_t charCounter = 0; charCounter < characters.size(); charCounter++)
+    {
+        char CurrentChar = characters[charCounter];
+        Fraction CurrentExpo = Exponents[charCounter];
+        // If we can't find the value we'll emplace it into the list
+        if ( ReturnVList.find(CurrentChar) == ReturnVList.end() ) {
+            ReturnVList.emplace(CurrentChar,CurrentExpo);
+        }
+        else {
+            ReturnVList[CurrentChar] += CurrentExpo;
+        }
+    }
+    return ReturnVList;
+}
+
+/*----------------------------------------------------------*\
+| A Term is a term with a coefficient and a variable.        |
+| And sometimes an exponent                                  |
+| [ 6x^2. Funtioning as 6(x * x) ]                           |
+\*----------------------------------------------------------*/
 class Term
 {
-    /*----------------------------------------------------------*\
-    | A Term is a term with a coefficient and a variable.        |
-    | And sometimes an exponent                                  |
-    | [ 6x^2. Funtioning as 6(x * x) ]                           |
-    \*----------------------------------------------------------*/
 public:
-    Term(Fraction Coefficient, std::vector<VarExpo> VList);
-    const std::map<char, Fraction> GetVarList();
-    // (Step 3) const char* out();
+    Term(Fraction Coefficient, VarExpo VList);
+    const VarExpo GetVarList();
+    bool IsCompatible(Term);
+    string out();
 
-    // You can subtract by just swapping symbols. So subtracting a negative is just addition.
-    vector<Term> operator+(Term ToAdd);
+    //vector<Term> operator+(Term ToAdd);
     
-    //vector<Term> SubTerm(Term ToSub);
+    //vector<Term> operator-(Term ToSub);
     
     //Term MultiplyTerm(Term ToMultiply);
 	
     //Term DevideTerm(Term ToDevide);
 
 private:
-    std::map<char, Fraction> VarList;
+    VarExpo VarList;
     Fraction Coef;
-
-    bool IsCompatible(Term); // Step 2
 };
 
-
-Term::Term(Fraction Coefficient, std::vector<VarExpo> VList)
+Term::Term(Fraction Coefficient, VarExpo VList)
 {
-    std::map<char,signed int> PassBack;
-    for( char c : "abcdefghijklmnopqrstuvwxyz") { // for every letter in the alphabet
-        Fraction FExpo = Fraction(0,1); // Signed can do negative
-        for (int v = 0; v < (int)VList.size(); v++)
-        {
-            if (VList[v].VarLetter == c)
-            {
-                FExpo += (VList[v].Expo);
-            }
-        }
-
-        if (FExpo != 0)
-        {
-            PassBack.emplace(c,FExpo);
-            //TempContains[ToAlphaPos(c)] = true;
-        }
-        FExpo = 0;
-    }
+    Coef = Coefficient;
+    VarList = VList;
 }
 
 // WIP
@@ -67,86 +66,30 @@ const std::map<char, Fraction> Term::GetVarList()
 
 bool Term::IsCompatible(Term Check)
 {
-    std::map<char, Fraction> ExtVL = Check.GetVarList();
-    if (this->VarList.size() != ExtVL.size() )
+    if (this->VarList.size() != Check.GetVarList().size() )
     {
         return false;
     }
 
-    for (auto it = this->VarList.begin(); it != this->VarList.end(); it++)
-    {
-        cout << it->first << endl;
-        //if (ExtVL.find())
-        //{
-        //    
-        //}
+    VarExpo TempCheck = Check.GetVarList();
+
+    for (auto it = this->VarList.begin(); it != this->VarList.end(); it++) {
+        if (TempCheck.find(it->first) == TempCheck.end() ) {
+            return false;
+        } else if ((Fraction)(TempCheck.at(it->first)) == (Fraction)it->second) {
+            continue;
+        }
     }
     return true;
 }
 
-vector<Term> Term::AddTerm(Term ToAdd)
-{
-    vector<Term> ret; // ret is return. The final value we send out
-    if (!IsCompatible(ToAdd))
-    {
-        ret.push_back(*this);
-        ret.push_back(ToAdd);
-    }
-    // Make sure both fractions are simplified already
-    //Fraction ExpoSimp = this->Expo.SimplifyFraction();
-    //Fraction CheckExpoSimp = ToAdd.Expo.SimplifyFraction();
-//
-    //// If the Exponents and variables are the same then continue (Adding Terms is only legal if both of those are the same)
-    //if ((this->VarLetter == ToAdd.VarLetter)
-    //    /* Check letters to make sure they relate at all */ &&
-    //    ((ExpoSimp.TopHalf == CheckExpoSimp.TopHalf) && (ExpoSimp.BottomHalf == CheckExpoSimp.BottomHalf))
-    //)
-    //{
-    //    // Since all of the items in polynomails are storeed as fractions I just used the addFraction functions
-    //    Fraction NewCoef = this->Coef.AddFraction(ToAdd.Coef);
-//
-    //    // Send the one back
-    //    ret.push_back(Term(NewCoef,this->VarLetter,this->Expo));
-    //    return ret;
-    //}
-    //else
-    //{
-    //    // send them both back 
-    //    ret.push_back(*this);
-    //    ret.push_back(ToAdd);
-    //    return ret;
-    //}
-    return ret;
-}
-
-//vector<Term> Term::SubTerm(Term ToSub)
+//vector<Term> Term::operator+(Term ToAdd)
 //{
-    //vector<Term> ret; // ret is return. The final value we send out
-//
-    //// Make sure both fractions are simplified already
-    //Fraction ExpoSimp = this->Expo.SimplifyFraction();
-    //Fraction CheckExpoSimp = ToSub.Expo.SimplifyFraction();
-//
-    //// If the Exponents and variables are the same then continue (Adding Terms is only legal if both of those are the same)
-    //if ((this->VarLetter == ToSub.VarLetter)
-    //    /* Check letters to make sure they relate at all */ &&
-    //    ((ExpoSimp.TopHalf == CheckExpoSimp.TopHalf) && (ExpoSimp.BottomHalf == CheckExpoSimp.BottomHalf))
-    //)
-    //{
-    //    // Since all of the items in polynomails are storeed as fractions I just used the addFraction functions
-    //    Fraction NewCoef = this->Coef.SubtractFraction(ToSub.Coef);
-//
-    //    // Send the one back
-    //    ret.push_back(Term(NewCoef,this->VarLetter,this->Expo));
-    //    return ret;
-    //}
-    //else
-    //{
-    //    // send them both back 
-    //    ret.push_back(*this);
-    //    ret.push_back(ToSub);
-    //    return ret;
-    //}
+//    return ret;
+//}
+//vector<Term> Term::operator-(Term ToSub)
+//{
+//    return 
 //}
 
 //Term MultiplyTerm(Term ToMultiply)
@@ -155,11 +98,18 @@ vector<Term> Term::AddTerm(Term ToAdd)
 //    // Multiplying a term by a term should get you 1 term.
 //}
 
-//const char* Term::out()
-//{
-//    string CoutPoly;
-//    // Add Coefficient
-//    CoutPoly.append( this->Coef.isWhole() ? to_string(this->Coef.GetWhole()) : this->Coef.out() );
-//
-//    // Add variables
-//}
+string Term::out()
+{
+    string CoutPoly;
+    // Add Coefficient
+    CoutPoly.append( this->Coef.isWhole() ? to_string(this->Coef.GetWhole()) : this->Coef.out() );
+
+    // Add variables
+    for (auto it = this->VarList.begin(); it != this->VarList.end(); it++)
+    {
+        CoutPoly.append(sizeof(it->first) , it->first );
+        CoutPoly.append("^").append(it->second.out());
+    }
+
+    return CoutPoly;
+}
